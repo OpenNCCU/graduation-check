@@ -25,21 +25,22 @@ app.get("*", (req, res) => {
   preData.add2 = addParser(preData.add2);
   preData.add3 = addParser(preData.add3);
   preData.registerHistory = registerHistoryParser(preData.registerHistory);
-  preData.credit = creditParser(preData.credit);
-  preData.replaceCredit = creditParser(preData.replaceCredit);
+  preData.credits = creditParser(preData.credits);
+  preData.replaceCredits = creditParser(preData.replaceCredits);
 
+  
+  preData.registers = [];
+  preData.registerHistory && preData.registers.push(registerHistoryReducer(preData.registerHistory));
+  preData.add1 && preData.registers.push(addReducer(preData.add1));
+  preData.add2 && preData.registers.push(addReducer(preData.add2));
+  preData.add3 && preData.registers.push(addReducer(preData.add3));
+  
   const data = {};
+  data.requires = preData.registers.map(register => getRequire(register));
 
-  data.registerArray = [];
-  data.registerArray.push(registerHistoryReducer(preData.registerHistory));
-  preData.add1 && data.registerArray.push(addReducer(preData.add1));
-  preData.add2 && data.registerArray.push(addReducer(preData.add2));
-  preData.add3 && data.registerArray.push(addReducer(preData.add3));
-
-  data.requireArray = getAllRequires(data.registerArray);
-
-  data.credit = preData.credit;
-  data.replaceCredit = preData.replaceCredit;
+  data.credits = preData.credits;
+  data.replaceCredits = preData.replaceCredits;
+  data.requires = data.requires.map(require => checkRequire(require, preData.credits, preData.replaceCredits));
 
   const result = { data: data, success: false, error: "NULL PATH." };
   res.send(result);
@@ -75,10 +76,10 @@ const dataFilter = (data) => {
   const credit = getKeyItem('課業學習');
   if (!credit) return undefined;
 
-  result.credit = credit.creditDataArray;
-  if (!result.credit) return undefined;
-  result.replaceCredit = credit.replaceCreditDataArray;
-  if (!result.replaceCredit) return undefined;
+  result.credits = credit.creditDataArray;
+  if (!result.credits) return undefined;
+  result.replaceCredits = credit.replaceCreditDataArray;
+  if (!result.replaceCredits) return undefined;
 
   return result;
 }
@@ -184,14 +185,20 @@ const registerHistoryReducer = (attribute) => {
   }
 }
 
-const getAllRequires = (registerArray) => {
-  return registerArray.map(register => getRequire(register));
-};
-
 const getRequire = (register) => {
-  return { ...register };
+  return {
+    ...register,
+  };
 }
 
-const checkRequire = () => {
+const checkRequire = (require, credit, replaceCredit) => {
+  credit.forEach(element => {
+    
+  });
+  replaceCredit.forEach(element => {
 
+  });
+  return {
+    ...require,
+  };
 };
