@@ -1,16 +1,17 @@
-const express = require("express");
+const express = require('express');
+
 const router = express.Router();
 
-const fs = require('fs');
+// const fs = require('fs');
 
-router.post("", async (req, res) => {
-  console.log(req.body);
+router.post('', async (req, res) => {
+  // console.log(req.body);
 
-  const result = { data: [], success: false, error: "" };
+  const result = { data: [], success: false, error: '' };
 
   // TODO: Add your code here.
 
-  result["data"] = data;
-  result["success"] = true;
+  // result.data = data;
+  result.success = true;
   res.send(result);
 });

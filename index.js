@@ -1,6 +1,6 @@
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
+const express = require('express');
+const cors = require('cors');
+// const path = require('path')
 
 const app = express();
 const port = 3000;
@@ -8,197 +8,250 @@ const port = 3000;
 app.use(express.json());
 app.use(cors());
 // app.use(express.static(path.join(__dirname, "build")));
-
 // app.use("/api/test", require("./test"));
 
 app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`);
+  // console.log(`App listening at http://localhost:${port}`);
 });
 
-app.get("*", (req, res) => {
-  // console.log(req.url)
-  req.body = require("./.dummydata"); // dummy data
+/*
+ * Dummy data.
+ */
+const dummydata = require('./.dummydata');
+const departmentMap = require('./departmentMap');
+// const required = require('./required');
 
-  const preData = dataFilter(req.body);
-
-  preData.add1 = addParser(preData.add1);
-  preData.add2 = addParser(preData.add2);
-  preData.add3 = addParser(preData.add3);
-  preData.registerHistory = registerHistoryParser(preData.registerHistory);
-  preData.credits = creditParser(preData.credits);
-  preData.replaceCredits = creditParser(preData.replaceCredits);
-
-  
-  preData.registers = [];
-  preData.registerHistory && preData.registers.push(registerHistoryReducer(preData.registerHistory));
-  preData.add1 && preData.registers.push(addReducer(preData.add1));
-  preData.add2 && preData.registers.push(addReducer(preData.add2));
-  preData.add3 && preData.registers.push(addReducer(preData.add3));
-  
-  const data = {};
-  data.requires = preData.registers.map(register => getRequire(register));
-
-  data.credits = preData.credits;
-  data.replaceCredits = preData.replaceCredits;
-  data.requires = data.requires.map(require => checkRequire(require, preData.credits, preData.replaceCredits));
-
-  const result = { data: data, success: false, error: "NULL PATH." };
-  res.send(result);
-});
-
+/*
+ * Filter.
+ */
 const dataFilter = (data) => {
+  const result = {};
+
   const getKeyItem = (key) => {
-    if (!data) return undefined;
-    if (!Array.isArray(data)) return undefined;
-    if (data.length === 0) return undefined;
-    if (data.find(e => Object.keys(e)[0] === key) === undefined) return undefined;
-    if (data.find(e => Object.keys(e)[0] === key)[key] === undefined) return undefined;
-    return data.find(e => Object.keys(e)[0] === key)[key];
+    if (!data) { return undefined; }
+    if (!Array.isArray(data)) { return undefined; }
+    if (data.length === 0) { return undefined; }
+    if (data.find((e) => Object.keys(e)[0] === key) === undefined) { return undefined; }
+    if (data.find((e) => Object.keys(e)[0] === key)[key] === undefined) { return undefined; }
+    return data.find((e) => Object.keys(e)[0] === key)[key];
   };
 
-  const result = {};
-  const student = getKeyItem('基本資料');
-  if (!student) return undefined;
-
-  result.add1 = student.STUDENT_ADD_MJR;
-  if (typeof result.add1 !== 'string') return undefined;
-  result.add2 = student.STUDENT_ADD_MJR2;
-  if (typeof result.add2 !== 'string') return undefined;
-  result.add3 = student.STUDENT_ADD_MJR3;
-  if (typeof result.add3 !== 'string') return undefined;
-
-  const registration = getKeyItem('學籍歷程');
-  if (!registration) return undefined;
-
-  result.registerHistory = registration.registerHistoryDataArray;
-  if (!result.registerHistory) return undefined;
-
+  const studentInfo = getKeyItem('基本資料');
+  const registerHistory = getKeyItem('學籍歷程');
   const credit = getKeyItem('課業學習');
-  if (!credit) return undefined;
 
+  if (!studentInfo) {
+    return undefined;
+  }
+  if (typeof studentInfo.STUDENT_ADD_MJR !== 'string') {
+    return undefined;
+  }
+  if (typeof studentInfo.STUDENT_ADD_MJR2 !== 'string') {
+    return undefined;
+  }
+  if (typeof studentInfo.STUDENT_ADD_MJR3 !== 'string') {
+    return undefined;
+  }
+  if (!registerHistory) {
+    return undefined;
+  }
+  if (!registerHistory.registerHistoryDataArray) {
+    return undefined;
+  }
+  if (!credit) {
+    return undefined;
+  }
+  if (!credit.creditDataArray) {
+    return undefined;
+  }
+  if (!credit.replaceCreditDataArray) {
+    return undefined;
+  }
+
+  result.addition1 = studentInfo.STUDENT_ADD_MJR;
+  result.addition2 = studentInfo.STUDENT_ADD_MJR2;
+  result.addition3 = studentInfo.STUDENT_ADD_MJR3;
+  result.registerHistory = registerHistory.registerHistoryDataArray;
   result.credits = credit.creditDataArray;
-  if (!result.credits) return undefined;
   result.replaceCredits = credit.replaceCreditDataArray;
-  if (!result.replaceCredits) return undefined;
 
-  return result;
-}
-
-const addParser = (attribute) => {
-  const departmentMap = require("./departmentMap");
-  const addArray = attribute.split('：').flatMap(e => e.split('(')).flatMap(e => e.replace(')', ''));
-  const addType = addArray[0];
-  const addDept = addArray[1];
-  const addYear = parseInt(addArray[2]);
-  const result = addArray.length === 3 ? {
-    type: addType.includes('輔系') ? 'minor' : 'major',
-    deptString: addDept,
-    year: addYear,
-    ...departmentMap[addYear][addDept]
-  } : undefined;
   return result;
 };
 
-const registerHistoryParser = (attribute) => {
-  const departmentMap = require("./departmentMap");
+/*
+ * Parser.
+ */
+const additionParser = (attr) => {
+  const additionArray = attr
+    .split('：')
+    .flatMap((e) => e.split('('))
+    .flatMap((e) => e.replace(')', '')); // split by '：' and '(' and ')'
+  const additionType = additionArray[0];
+  const additionDept = additionArray[1];
+  const additionYear = parseInt(additionArray[2], 10);
+  if (additionArray.length !== 3) {
+    return undefined;
+  }
+  const result = {
+    type: additionType.includes('輔系') ? 'minor' : 'major',
+    deptString: additionDept,
+    year: additionYear,
+    ...departmentMap[additionYear][additionDept],
+  };
+  return result;
+};
 
+const registerHistoryParser = (attr) => {
   let result = null;
-  if (attribute.length > 0) {
-    result = attribute.map(e => {
-      const yearAndSemester = e.year.split('(')[0].split('/').map(e => parseInt(e.trim()));
+  if (attr.length > 0) {
+    result = attr.map((e) => {
+      const yearAndSemester = e.year
+        .split('(')[0]
+        .split('/')
+        .map((yearOrSemester) => parseInt(yearOrSemester.trim(), 10));
       const year = yearAndSemester[0];
       const semester = yearAndSemester[1];
       const regsts = e.regsts.split(' ')[0];
       const gradename = e.gradename.split(' ')[0];
 
       return {
-        year: year,
-        semester: semester,
-        regsts: regsts,
-        gradename: gradename,
-        ...departmentMap[year][gradename]
-      }
+        year,
+        semester,
+        regsts,
+        gradename,
+        ...departmentMap[year][gradename],
+      };
     });
   }
   return result;
 };
 
-const creditParser = (attribute) => {
-  let result = attribute;
-  if (attribute.length > 0) {
-    result = attribute.map(e => {
-      const year = parseInt(e.year.trim());
-      const semester = parseInt(e.semester.trim());
-      const subNum = e.subNum;
+const creditParser = (attr) => {
+  let result = attr;
+  if (attr.length > 0) {
+    result = attr.map((e) => {
+      const year = parseInt(e.year.trim(), 10);
+      const semester = parseInt(e.semester.trim(), 10);
+      const { subNum } = e;
       const subName = e.subName.trim();
       const subSel = e.subSel.trim();
-      const subPnt = e.subPnt;
-      const score = e.score;
+      const { subPnt } = e;
+      const { score } = e;
 
       return {
-        year: year,
-        semester: semester,
-        subNum: subNum,
-        subName: subName,
-        subSel: subSel,
-        subPnt: subPnt,
-        score: score
-      }
+        year,
+        semester,
+        subNum,
+        subName,
+        subSel,
+        subPnt,
+        score,
+      };
     });
   }
   return result;
 };
 
-const addReducer = (attribute) => {
-  if (!attribute) return undefined;
+/*
+ * Reducer.
+ */
+const addReducer = (attr) => {
+  if (!attr) {
+    return undefined;
+  }
   return {
     main: false,
-    type: attribute.type,
-    dept: attribute.dept,
-    group: attribute.group,
-    year: attribute.year
-  }
-}
+    type: attr.type,
+    dept: attr.dept,
+    group: attr.group,
+    year: attr.year,
+  };
+};
 
-const registerHistoryReducer = (attribute) => {
+const registerHistoryReducer = (attr) => {
   let notRegNum = 0;
-  for (let i = 1; i <= attribute.length; i++) {
-    if (attribute[attribute.length - i].regsts !== '註冊') {
-      notRegNum++;
+  for (let i = 1; i <= attr.length; i += 1) {
+    if (attr[attr.length - i].regsts !== '註冊') {
+      notRegNum += 1;
     }
-    if (i === attribute.length ||
-      attribute[attribute.length - i].dept !== attribute[attribute.length - i - 1].dept) {
-      const regDept = attribute[attribute.length - i];
-      const dept = regDept.dept;
-      const group = regDept.group;
+    if (i === attr.length
+      || attr[attr.length - i].dept !== attr[attr.length - i - 1].dept) {
+      const regDept = attr[attr.length - i];
+      const { dept } = regDept;
+      const { group } = regDept;
       const regNum = (i - notRegNum) + (regDept.grade - 1) * 2 - (regDept.semester - 1);
       const regYear = regDept.year - (regDept.grade - 1);
       return {
         main: true,
         type: 'major',
-        dept: dept,
-        group: group,
+        dept,
+        group,
         year: regYear,
-        regNum: regNum
+        regNum,
       };
     }
   }
-}
-
-const getRequire = (register) => {
-  return {
-    ...register,
-  };
-}
-
-const checkRequire = (require, credit, replaceCredit) => {
-  credit.forEach(element => {
-    
-  });
-  replaceCredit.forEach(element => {
-
-  });
-  return {
-    ...require,
-  };
+  return undefined;
 };
+
+/*
+ * Fetcher.
+ */
+const getRequire = (register) => ({
+  ...register,
+});
+
+/*
+ * Comparator.
+ */
+const checkRequire = () => {
+  // const checkRequire = (require, credit, replaceCredit) => {
+  // credit.forEach(element => {
+  //   console.log(element)
+  //   // TODO: check require
+  // })
+  // replaceCredit.forEach(element => {
+  //   console.log(element)
+  //   // TODO: check require
+  // })
+  // return {
+  //   ...require
+  // }
+};
+
+/*
+ * Main.
+ */
+const handleData = (data) => {
+  const preData = dataFilter(data);
+
+  preData.addition1 = additionParser(preData.addition1);
+  preData.addition2 = additionParser(preData.addition2);
+  preData.addition3 = additionParser(preData.addition3);
+  preData.registerHistory = registerHistoryParser(preData.registerHistory);
+  preData.credits = creditParser(preData.credits);
+  preData.replaceCredits = creditParser(preData.replaceCredits);
+
+  preData.registers = [];
+  if (preData.registerHistory) preData.registers.push(registerHistoryReducer(preData.registerHistory));
+  if (preData.addition1) preData.registers.push(addReducer(preData.addition1));
+  if (preData.addition2) preData.registers.push(addReducer(preData.addition2));
+  if (preData.addition3) preData.registers.push(addReducer(preData.addition3));
+
+  const result = {};
+  result.requires = preData.registers.map((register) => getRequire(register));
+
+  result.credits = preData.credits;
+  result.replaceCredits = preData.replaceCredits;
+  result.requires = result.requires.map((require) => checkRequire(require, preData.credits, preData.replaceCredits));
+
+  return result;
+};
+
+app.get('*', (req, res) => {
+  // console.log(req.url)
+  req.body = dummydata; // dummy data
+  const data = handleData(req.body);
+  const result = { data, success: false, error: 'NULL PATH.' };
+  res.send(result);
+});
