@@ -17,8 +17,8 @@ app.listen(port, () => {
 /*
  * Dummy data.
  */
-const dummydata = require('./.dummydata');
-const departmentMap = require('./departmentMap');
+const dummydata = require('./data/.dummydata');
+const departmentMap = require('./data/departmentMap');
 // const required = require('./required');
 
 /*
