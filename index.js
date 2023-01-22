@@ -204,19 +204,12 @@ const getRequire = (register) => ({
 /*
  * Comparator.
  */
-const checkRequire = () => {
-  // const checkRequire = (require, credit, replaceCredit) => {
-  // credit.forEach(element => {
-  //   console.log(element)
-  //   // TODO: check require
-  // })
-  // replaceCredit.forEach(element => {
-  //   console.log(element)
-  //   // TODO: check require
-  // })
-  // return {
-  //   ...require
-  // }
+const checkRequire = (require, credit, replaceCredit) => {
+  credit.forEach((element) => element);
+  replaceCredit.forEach((element) => element);
+  return {
+    ...require,
+  };
 };
 
 /*
@@ -250,7 +243,7 @@ const handleData = (data) => {
 
 app.get('*', (req, res) => {
   // console.log(req.url)
-  req.body = dummydata; // dummy data
+  req.body = dummydata;
   const data = handleData(req.body);
   const result = { data, success: false, error: 'NULL PATH.' };
   res.send(result);
