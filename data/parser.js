@@ -1,8 +1,31 @@
 import fs from 'fs';
-import requiredSource from './requiredSource.js';
+// import requiredSource from './requiredSource_test.js';
+
+// const read = () => {
+//   const input = fs.readFileSync('./data/result.json');
+//   const data = JSON.parse(input);
+//   const result = {};
+//   data.forEach((d) => {
+//     d.children.forEach((g) => {
+//       g.children.forEach((y) => {
+//         if (!result[y.year]) {
+//           result[y.year] = [];
+//         }
+//         result[y.year].push({
+//           dept: d.department_id,
+//           group: g.group_id,
+//           ...y,
+//         });
+//       });
+//     });
+//   });
+//   fs.writeFileSync('./data/result1.json', JSON.stringify(result, null, 2));
+// };
 
 const parse = () => {
-  const data = { ...requiredSource };
+  const data = JSON.parse(fs.readFileSync('./data/requiredSource.json'));
+  // read();
+  // const data = { ...requiredSource };
   Object.keys(data).forEach((year) => {
     data[year] = data[year].map((item) => {
       const require = {
@@ -16,12 +39,12 @@ const parse = () => {
       // require.groupName = item.group_name;
 
       require.requireCredit = item.credit;
-      require.minTotalCredit = parseInt(
-        item.group_condition
-          .find((text) => text.includes('本系最低畢業總學分數：'))
-          .replace(/本系最低畢業總學分數：([0-9]+)學分/, '$1'),
-        10,
-      );
+      require.minTotalCredit = item.group_condition
+        .find((text) => text.includes('本系最低畢業總學分數：'))
+        .replace(/.*本系最低畢業總學分數：(\d+)學分.*/, '$1');
+      console.log(require.minTotalCredit);
+
+      require.minTotalCredit = parseInt(require.minTotalCredit, 10);
       // require.group_condition = item.group_condition;
       // require.spacialty = item.spacialty;
       require.PErequire = item.spacialty.find((text) => text.match(/(體育).*(選修)/));
@@ -63,7 +86,7 @@ const parse = () => {
           semester: [ruleBase['第一學年上'], ruleBase['第一學年下'], ruleBase['第二學年上'], ruleBase['第二學年下'], ruleBase['第三學年上'], ruleBase['第三學年下'], ruleBase['第四學年上'], ruleBase['第四學年下']].map((e) => e !== '無'),
           constraint,
         };
-        if (!group) {
+        if (!group || require.rules.length - 1 <= 0) {
           rule.subjects.push(subject);
           require.rules.push(rule);
         } else {
