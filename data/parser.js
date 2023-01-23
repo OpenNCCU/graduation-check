@@ -1,4 +1,4 @@
-// import fs from 'fs';
+import fs from 'fs';
 import required from './required.js';
 
 const parse = () => {
@@ -6,7 +6,7 @@ const parse = () => {
   const result = { ...data };
   Object.keys(result).forEach((year) => {
     result[year] = result[year].map((item) => {
-      const r = { ...item };
+      const r = {};
 
       r.year = item.year;
       r.department_name = item.department_name;
@@ -30,7 +30,7 @@ const parse = () => {
       return r;
     });
 
-    // fs.writeFileSync('./data/test.json', JSON.stringify(result, null, 2));
+    fs.writeFileSync('./data/test.json', JSON.stringify(result, null, 2));
   });
   return result;
 };
