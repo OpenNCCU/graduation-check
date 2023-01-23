@@ -1,5 +1,5 @@
 import fs from 'fs';
-import requiredSource from './required.js';
+import requiredSource from './requiredSource.js';
 
 const parse = () => {
   const data = { ...requiredSource };
