@@ -1,7 +1,7 @@
 const data = {
   107: [
     {
-      dept: '403',
+      dept: '504',
       group: 0,
       subjects: [
       ],
@@ -405,7 +405,7 @@ const data = {
   ],
   108: [
     {
-      dept: '504',
+      dept: '403',
       group: 0,
       subjects: [
       ],
