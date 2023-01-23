@@ -15,6 +15,10 @@ const parse = () => {
         // eslint-disable-next-line no-nested-ternary
         r1.constraint = subject['須修本門課之科目代碼'] === '無' ? (subject['認定方式'] === '不限' ? '' : r.dept.substring(0, (subject['認定方式'] === '需為本系開課' ? 3 : 1))) : subject['須修本門課之科目代碼'];
         r1.group = subject['修別'].includes('群') ? subject['修別'].substring(1, 2) : '';
+        r1.note = subject['備註(先修科目說明)'];
+        r1.maxCredit = subject['規定學分'];
+        r1.minCredit = subject['規定學分'];
+        r1.semCount = subject['學期數'];
         return r1;
       });
       return r;
