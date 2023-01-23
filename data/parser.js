@@ -1,11 +1,11 @@
-import fs from 'fs';
+// import fs from 'fs';
 import required from './required.js';
 
 const parse = () => {
   const data = required;
   const result = { ...data };
   Object.keys(result).forEach((year) => {
-    result[year].map((item) => {
+    result[year] = result[year].map((item) => {
       const r = { ...item };
       r.subjects = item.children.map((subject) => {
         const r1 = {};
@@ -17,9 +17,9 @@ const parse = () => {
       return r;
     });
 
-    fs.writeFileSync('./data/test.json', JSON.stringify(result, null, 2));
-    return result;
+    // fs.writeFileSync('./data/test.json', JSON.stringify(result, null, 2));
   });
+  return result;
 };
 
 export default parse;
