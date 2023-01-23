@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   107: {
     斯語一甲: {
       deptName: '斯拉夫語文學系',
