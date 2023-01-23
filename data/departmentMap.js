@@ -1,8 +1,8 @@
-export default {
+const data = {
   107: {
     斯語一甲: {
       deptName: '斯拉夫語文學系',
-      dept: '504',
+      deptID: '504',
       group: 0,
       grade: 1,
     },
@@ -10,7 +10,7 @@ export default {
   108: {
     斯語二甲: {
       deptName: '斯拉夫語文學系',
-      dept: '504',
+      deptID: '504',
       group: 0,
       grade: 2,
     },
@@ -18,7 +18,7 @@ export default {
   109: {
     斯語三甲: {
       deptName: '斯拉夫語文學系',
-      dept: '504',
+      deptID: '504',
       group: 0,
       grade: 3,
     },
@@ -26,12 +26,12 @@ export default {
   110: {
     政治系: {
       deptName: '政治學系',
-      dept: '202',
+      deptID: '202',
       group: 0,
     },
     斯語四甲: {
       deptName: '斯拉夫語文學系',
-      dept: '504',
+      deptID: '504',
       group: 0,
       grade: 4,
     },
@@ -39,9 +39,11 @@ export default {
   111: {
     廣電四: {
       deptName: '廣播電視學系',
-      dept: '403',
+      deptID: '403',
       group: 0,
       grade: 4,
     },
   },
 };
+
+export default data;

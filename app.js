@@ -7,6 +7,7 @@ import cors from 'cors';
 import dummydata from './data/.dummydata.js';
 
 // methods
+import parser from './data/parser.js';
 import handleData from './src/dataHandler.js';
 
 const app = express();
@@ -23,6 +24,7 @@ app.listen(port, () => {
 });
 
 app.get('*', (req, res) => {
+  parser();
   // console.log(req.url)
   req.body = dummydata;
   const data = handleData(req.body);

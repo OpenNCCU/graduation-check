@@ -7,14 +7,14 @@ const registerHistoryReducer = (attr) => {
     if (i === attr.length
       || attr[attr.length - i].dept !== attr[attr.length - i - 1].dept) {
       const regDept = attr[attr.length - i];
-      const { dept } = regDept;
+      const { deptID } = regDept;
       const { group } = regDept;
       const regNum = (i - notRegNum) + (regDept.grade - 1) * 2 - (regDept.semester - 1);
       const regYear = regDept.year - (regDept.grade - 1);
       return {
         main: true,
         type: 'major',
-        dept,
+        deptID,
         group,
         year: regYear,
         regNum,

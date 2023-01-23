@@ -3,9 +3,8 @@ const addReducer = (attr) => {
     return undefined;
   }
   return {
-    main: false,
     type: attr.type,
-    dept: attr.dept,
+    deptID: attr.deptID,
     group: attr.group,
     year: attr.year,
   };
