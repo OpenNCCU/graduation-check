@@ -24,10 +24,10 @@ app.listen(port, () => {
 });
 
 app.get('*', (req, res) => {
-  parser();
+  const data = parser();
   // console.log(req.url)
-  req.body = dummydata;
-  const data = handleData(req.body);
+  // req.body = dummydata;
+  // const data = handleData(req.body);
   const result = { data, success: false, error: 'NULL PATH.' };
   res.send(result);
 });
