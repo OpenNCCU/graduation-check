@@ -24,5 +24,3 @@ dist-ssr
 *.sw?
 
 .dummydata.js
-*.backup
-test.json
