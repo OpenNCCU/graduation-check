@@ -28,7 +28,6 @@ const parse = () => {
       require.NDrequire = item.spacialty.find((text) => text.match(/國防/));
 
       require.rules = [];
-
       item.children.forEach((ruleBase) => {
         let constraint;
         if (ruleBase['須修本門課之科目代碼'] !== '無') {

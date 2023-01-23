@@ -5,7 +5,7 @@ const registerHistoryReducer = (attr) => {
       notRegNum += 1;
     }
     if (i === attr.length
-      || attr[attr.length - i].dept !== attr[attr.length - i - 1].dept) {
+      || attr[attr.length - i].deptID !== attr[attr.length - i - 1].deptID) {
       const regDept = attr[attr.length - i];
       const { deptID } = regDept;
       const { group } = regDept;

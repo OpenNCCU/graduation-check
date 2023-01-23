@@ -1,18 +1,26 @@
+const getKeyItem = (data, key) => {
+  if (!data) {
+    return undefined;
+  }
+  if (!Array.isArray(data)) {
+    return undefined;
+  }
+  if (data.length === 0) {
+    return undefined;
+  }
+  if (data.find((e) => Object.keys(e)[0] === key) === undefined) {
+    return undefined;
+  }
+  if (data.find((e) => Object.keys(e)[0] === key)[key] === undefined) {
+    return undefined;
+  }
+  return data.find((e) => Object.keys(e)[0] === key)[key];
+};
+
 const dataFilter = (data) => {
-  const result = {};
-
-  const getKeyItem = (key) => {
-    if (!data) { return undefined; }
-    if (!Array.isArray(data)) { return undefined; }
-    if (data.length === 0) { return undefined; }
-    if (data.find((e) => Object.keys(e)[0] === key) === undefined) { return undefined; }
-    if (data.find((e) => Object.keys(e)[0] === key)[key] === undefined) { return undefined; }
-    return data.find((e) => Object.keys(e)[0] === key)[key];
-  };
-
-  const studentInfo = getKeyItem('基本資料');
-  const registerHistory = getKeyItem('學籍歷程');
-  const credit = getKeyItem('課業學習');
+  const studentInfo = getKeyItem(data, '基本資料');
+  const registerHistory = getKeyItem(data, '學籍歷程');
+  const credit = getKeyItem(data, '課業學習');
 
   if (!studentInfo) {
     return undefined;
@@ -42,6 +50,7 @@ const dataFilter = (data) => {
     return undefined;
   }
 
+  const result = {};
   result.addition1 = studentInfo.STUDENT_ADD_MJR;
   result.addition2 = studentInfo.STUDENT_ADD_MJR2;
   result.addition3 = studentInfo.STUDENT_ADD_MJR3;

@@ -31,6 +31,7 @@ const handleData = (data) => {
   if (preData.addition3) {
     preData.registers.push(addReducer(preData.addition3));
   }
+  // return preData;
 
   const result = {
     requires: preData.registers.map((register) => requireFetcher(register)),
