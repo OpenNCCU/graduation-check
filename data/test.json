@@ -528,5 +528,163 @@
         }
       ]
     }
+  ],
+  "aaa": [
+    [
+      {
+        "name": "初級俄語",
+        "type": "必修",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "初級俄語會話",
+        "type": "必修",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "初級俄語語法",
+        "type": "必修",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "中級俄語",
+        "type": "必修",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "中級俄語會話",
+        "type": "必修",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "中級俄語語法",
+        "type": "必修",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "俄國史",
+        "type": "必修",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "進階俄語會話",
+        "type": "必修",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "進階俄語語法",
+        "type": "必修",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "進階俄語：綜合",
+        "type": "必修",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "俄國文學史",
+        "type": "必修",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "高階俄語會話",
+        "type": "必修",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "應用俄語寫作",
+        "type": "必修",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "從文化看世界",
+        "type": "群A",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "從文學看世界",
+        "type": "群A",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "語言與世界",
+        "type": "群A",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "進階俄語：社會",
+        "type": "群B",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "進階俄語：政治外交",
+        "type": "群B",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "進階俄語：文化",
+        "type": "群B",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "進階俄語：文學",
+        "type": "群B",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "進階俄語：新聞",
+        "type": "群B",
+        "semester": [
+          null
+        ]
+      },
+      {
+        "name": "進階俄語：經貿",
+        "type": "群B",
+        "semester": [
+          null
+        ]
+      }
+    ]
   ]
 }
