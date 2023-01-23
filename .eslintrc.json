@@ -1,6 +1,7 @@
 {
     "env": {
-        "commonjs": true,
+        // "commonjs": true,
+        "es6": true,
         "es2021": true,
         "node": true
     },
@@ -11,6 +12,7 @@
         "ecmaVersion": "latest"
     },
     "rules": {
+        "import/extensions": "off",
         "linebreak-style": "off",
         "max-len": "off"
     }
