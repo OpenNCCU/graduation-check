@@ -7,48 +7,52 @@ const parse = () => {
 
   const data = JSON.parse(fs.readFileSync('./data/result.json'));
 
+  const results = [];
+
   Object.keys(data).forEach((year) => {
-    data[year] = data[year].map((require) => {
-      const result = {};
+    data[year] = data[year].map((requireItem) => {
+      const resultItem = {};
 
-      // result.groupCondition = require.groupCondition;
-      require.groupCondition.find((text, idx) => {
-        if (text === '群修條件說明:') {
-          result.groups = require.groupCondition.slice(idx + 1).filter((t) => t !== '無');
-          return true;
+      // resultItem.year = requireItem.year;
+      // resultItem.departmentName = requireItem.departmentName;
+      // resultItem.groupName = requireItem.groupName;
+
+      let { groupCondition } = requireItem;
+      groupCondition = groupCondition.reduce((acc, cur, i) => {
+        if (i > 0 && i < requireItem.groupCondition.findIndex((text) => text === '群修條件說明:')) {
+          return [`${acc[0]} ${cur}`];
         }
-        return false;
-      });
-      result.groupLength = result.groups.length;
+        return [...acc, cur];
+      }, []);
+      // resultItem.groupCondition = groupCondition;
+      // resultItem.groups_1 = groupCondition.slice(0, 1);
+      resultItem.groups_2 = groupCondition.slice(2)
+        .filter((text) => text !== '無')
+        .map((text, i) => {
+          if (text.match(/^群[A-Za-z].*/)
+            || i >= requireItem.rules.filter((rule) => rule.group.length > 0).length) {
+            return text;
+          }
+          return `群${[...'ABCDEFG'][i]}：${text}`;
+        });
 
-      result.gl2 = require.rules.filter((rule) => rule.group.length > 0).length;
-      if (result.gl2 > result.groupLength) {
-        // result.max = 'gl2';
-        // result.ruleGroup = require.rules.filter((rule) => rule.group.length > 0);
-        if (result.groupLength === 0) {
-          result.year = require.year;
-          result.departmentName = require.departmentName;
-          result.groupName = require.groupName;
-          // fs.appendFileSync('./data/output.json.local', `${JSON.stringify(result, null, 2)}\n`);
-          fs.appendFileSync('./data/output.json.local', `${result.year}-${result.departmentName}\n`);
-        }
-      }
-      if (result.gl2 < result.groupLength) {
-        result.max = 'groupLength';
-      }
-      if (result.gl2 === result.groupLength) {
-        result.max = 'equal';
-      }
-      // result.eq = result.groupLength === result.gl2;
+      // if (resultItem.groups_2.filter((text) => !text.match(/^群[A-Za-z].*/)).length > 0) {
+      //   resultItem.year = requireItem.year;
+      //   resultItem.departmentName = requireItem.departmentName;
+      //   resultItem.groupName = requireItem.groupName;
+      //   resultItem.conditionLength = resultItem.groups_2.length;
+      //   resultItem.rulesLength = requireItem.rules.filter((rule) => rule.group.length > 0).length;
+      //   resultItem.aa = resultItem.conditionLength === resultItem.rulesLength;
+      // }
 
-      // console.log(require.groupCondition);
-      // result.minTotalCredit1 = require.groupCondition
-      //   .find((text) => text.match(/本[系]*[學程]*[取得學位]*最低[畢業總]*學分數：/))
-      //   .replace(/.*本[系]*[學程]*[取得學位]*最低[畢業總]*學分數：(\d+)學分.*/, '$1');
-      // result.minTotalCredit2 = [require.groupCondition[0]]
-      //   .find((text) => text.match(/本[系]*[學程]*[取得學位]*最低[畢業總]*學分數：/))
-      //   .replace(/.*本[系]*[學程]*[取得學位]*最低[畢業總]*學分數：(\d+)學分.*/, '$1');
-      // result.equal = result.minTotalCredit1 === result.minTotalCredit2;
+      if (results.findIndex((r) => JSON.stringify(r) === JSON.stringify(resultItem)) === -1) {
+        results.push(resultItem);
+      }
+      //   fs.appendFileSync('./data/output.json.local', `${JSON.stringify(resultItem, null, 2)}\n`);
+      // result.groupConditionLength = result.groups.length;
+      // result.groupRuleLength = require.rules.filter((rule) => rule.group.length > 0).length;
+
+      /* */
 
       // result.PErequire = require.spacialty.find((text) => text.match(/(體育)(?!必修).*(選修)*/));
       // if (!result.PErequire) {
@@ -74,9 +78,10 @@ const parse = () => {
       // }
 
       // fs.appendFileSync('./data/output.json.local', `${JSON.stringify(result, null, 2)}\n`);
-      return require;
+      return requireItem;
     });
   });
+  fs.appendFileSync('./data/output.json.local', `${JSON.stringify(results, null, 2)}\n`);
 
   return data;
 };
