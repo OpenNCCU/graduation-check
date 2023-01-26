@@ -10,6 +10,8 @@ const parse = () => {
   const results = [];
 
   Object.keys(data).forEach((year) => {
+    // fs.appendFileSync('./data/output.csv.local', `\n\n# ${year}學年度\n\n`);
+
     data[year] = data[year].map((requireItem) => {
       const resultItem = {};
 
@@ -77,7 +79,7 @@ const parse = () => {
       //     .replaceAll('全民國防教育軍事訓練', '軍訓');
       // }
 
-      // fs.appendFileSync('./data/output.json.local', `${JSON.stringify(result, null, 2)}\n`);
+      // fs.appendFileSync('./data/output.csv.local', `${requireItem.departmentName}${requireItem.groupName}：https://z15r7.github.io/NCCU-required/${requireItem.year}-${requireItem.departmentID}-${requireItem.groupID}.html\n\n`);
       return requireItem;
     });
   });
