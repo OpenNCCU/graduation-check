@@ -16,28 +16,20 @@ const parse = () => {
       // resultItem.departmentName = requireItem.departmentName;
       // resultItem.groupName = requireItem.groupName;
 
-      resultItem.aa = requireItem.groupCondition; // .findIndex((text) => text === '群修條件說明:') === 1;
+      // resultItem.aa = requireItem.groupCondition; // .findIndex((text) => text === '群修條件說明:') === 1;
 
       /* */
-
-      // let { groupCondition } = requireItem;
-      // groupCondition = groupCondition.reduce((acc, cur, i) => {
-      //   if (i > 0 && i < requireItem.groupCondition.findIndex((text) => text === '群修條件說明:')) {
-      //     return [`${acc[0]} ${cur}`];
-      //   }
-      //   return [...acc, cur];
-      // }, []);
-      // resultItem.groupCondition = groupCondition;
-      // resultItem.groups_1 = groupCondition.slice(0, 1);
-      // resultItem.groups_2 = groupCondition.slice(2)
-      //   .filter((text) => text !== '無')
-      //   .map((text, i) => {
-      //     if (text.match(/^群[A-Za-z].*/)
-      //       || i >= requireItem.rules.filter((rule) => rule.group.length > 0).length) {
-      //       return text;
-      //     }
-      //     return `群${[...'ABCDEFG'][i]}：${text}`;
-      //   });
+      resultItem.groupCondition = requireItem.groupCondition;
+      // resultItem.groups_1 = requireItem.groupCondition.slice(0, 1);
+      resultItem.groups_2 = requireItem.groupCondition.slice(2)
+        .filter((text) => text !== '無')
+        .map((text, i) => {
+          if (text.match(/^群[A-Za-z].*/)
+            || i >= requireItem.rules.filter((rule) => rule.group.length > 0).length) {
+            return text;
+          }
+          return `群${[...'ABCDEFG'][i]}：${text}`;
+        });
 
       // if (resultItem.groups_2.filter((text) => !text.match(/^群[A-Za-z].*/)).length > 0) {
       //   resultItem.year = requireItem.year;
