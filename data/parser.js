@@ -2,7 +2,7 @@ import fs from 'fs';
 
 const parse = () => {
   fs.writeFileSync('./data/output.json.local', '');
-  // fs.writeFileSync('./data/output.csv.local', '');
+  fs.writeFileSync('./data/output.csv.local', '');
 
   const data = JSON.parse(fs.readFileSync('./data/result.json'));
 
@@ -22,13 +22,26 @@ const parse = () => {
       resultItem.groupCondition = requireItem.groupCondition;
       // resultItem.groups_1 = requireItem.groupCondition.slice(0, 1);
       resultItem.groups_2 = requireItem.groupCondition.slice(2)
-        .filter((text) => text !== '無')
-        .map((text, i) => {
-          if (text.match(/^群[A-Za-z].*/)
-            || i >= requireItem.rules.filter((rule) => rule.group.length > 0).length) {
-            return text;
-          }
-          return `群${[...'ABCDEFG'][i]}：${text}`;
+        .filter((text) => text !== '無');
+      // resultItem.groups_2.forEach((text) => {
+      //   fs.appendFileSync('./data/output.csv.local', `${text}\n`);
+      // });
+      // resultItem.groups_3 = resultItem.groups_2
+      //   .reduce((acc, text, i) => ({ ...acc, [[...'ABCDEFG'][i]]: text }), {});
+      // .map((text, i) => {
+      //   if (text.match(/^群[A-Za-z].*/)
+      //     || i >= requireItem.rules.filter((rule) => rule.group.length > 0).length) {
+      //     return { [[...'ABCDEFG'][i]]: text };
+      //   }
+      //   return { [[...'ABCDEFG'][i]]: text };
+      // });
+      resultItem.groups_3 = {};
+      resultItem.groups_2
+        .forEach((item) => {
+          const label = item.replace(/^群([A-Za-z]).*/, '$1');
+          const text = item.replace(/群[A-Za-z][:： ]/, '');
+          resultItem.groups_3 = { ...resultItem.groups_3, [label]: text };
+          fs.appendFileSync('./data/output.csv.local', `[${label}]: ${text}\n`);
         });
 
       // if (resultItem.groups_2.filter((text) => !text.match(/^群[A-Za-z].*/)).length > 0) {
