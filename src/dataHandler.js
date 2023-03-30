@@ -3,7 +3,7 @@ import dataFilter from './modules/dataFilter.js';
 import additionParser from './modules/additionParser.js';
 import registerHistoryParser from './modules/registerHistoryParser.js';
 import creditParser from './modules/creditParser.js';
-import addReducer from './modules/addReducer.js';
+import additionReducer from './modules/additionReducer.js';
 import registerHistoryReducer from './modules/registerHistoryReducer.js';
 import requireFetcher from './modules/requireFetcher.js';
 import requireComparator from './modules/requireComparator.js';
@@ -23,13 +23,13 @@ const handleData = (data) => {
     preData.registers.push(registerHistoryReducer(preData.registerHistory));
   }
   if (preData.addition1) {
-    preData.registers.push(addReducer(preData.addition1));
+    preData.registers.push(additionReducer(preData.addition1));
   }
   if (preData.addition2) {
-    preData.registers.push(addReducer(preData.addition2));
+    preData.registers.push(additionReducer(preData.addition2));
   }
   if (preData.addition3) {
-    preData.registers.push(addReducer(preData.addition3));
+    preData.registers.push(additionReducer(preData.addition3));
   }
   // return preData;
 

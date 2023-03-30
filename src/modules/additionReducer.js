@@ -1,4 +1,4 @@
-const addReducer = (attr) => {
+const additionReducer = (attr) => {
   if (!attr) {
     return undefined;
   }
@@ -10,4 +10,4 @@ const addReducer = (attr) => {
   };
 };
 
-export default addReducer;
+export default additionReducer;
