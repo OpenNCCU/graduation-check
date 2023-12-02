@@ -7,7 +7,7 @@ import cors from 'cors';
 import dummydata from './data/.dummydata.js';
 
 // methods
-// import parser from './data/parser.js';
+import parser from './data/parser.js';
 // import departmentMapParser from './data/departmentMapParser.js';
 import handleData from './src/dataHandler.js';
 
@@ -28,7 +28,7 @@ app.get('*', (req, res) => {
   // departmentMapParser();
   // const data = parser();
   // console.log(req.url)
-  // parser();
+  parser();
   req.body = dummydata;
   const data = handleData(req.body);
   const result = { data, success: false, error: 'NULL PATH.' };
