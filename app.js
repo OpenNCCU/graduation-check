@@ -4,7 +4,7 @@ import cors from 'cors';
 // import path from 'path';
 
 // data
-import dummydata from './data/.dummydata.js';
+// import dummydata from './data/.dummydata.js';
 
 // methods
 import parser from './data/parser.js';
@@ -29,7 +29,8 @@ app.get('*', (req, res) => {
   // const data = parser();
   // console.log(req.url)
   parser();
-  req.body = dummydata;
+  // req.body = dummydata;
+  req.body = {};
   const data = handleData(req.body);
   const result = { data, success: false, error: 'NULL PATH.' };
   res.send(result);

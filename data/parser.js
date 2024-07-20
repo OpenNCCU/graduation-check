@@ -1,31 +1,45 @@
 import fs from 'fs';
 
 const parse = () => {
-  fs.writeFileSync('./data/output.json.local', '');
-  fs.writeFileSync('./data/output.csv.local', 'INSERT INTO public.test_require_grade\nVALUES\n');
+  // const rawfileList = fs.readdirSync('./data/res/');
+  // const rawData = {113: []};
+  // rawfileList.forEach((filename) => {
+  //   const data = JSON.parse(fs.readFileSync(`./data/res/${filename}`));
+  //   rawData[113].push(data);
+  // });
 
-  const data = JSON.parse(fs.readFileSync('./data/result.json'));
+  // fs.writeFileSync('./data/output.json.local', '');
+  // fs.writeFileSync('./data/output.csv.local', 'INSERT INTO public.test_require_grade\nVALUES\n');
+  fs.writeFileSync('./data/output.csv.local', 'INSERT INTO public.test_require_grade (require_uid, major, year, name, group, credit, semester, note, course_id_constraint, unit_constraint)\nVALUES\n');
+  const data = rawData;
+  // const data = JSON.parse(fs.readFileSync('./data/result.json'));
 
   const results = [];
 
   // Object.keys(data).forEach((year) => {
   //   data[year] =\
-  const year = 112;
+  const year = 113;
   data[year].forEach((requireItem) => {
     let courseIdx = 0;
     requireItem.rules.forEach((rule) => {
       const { subjects } = rule;
       subjects.forEach((subject) => {
         courseIdx += 1;
-        subject.semester.forEach((semester, idx) => {
-          if (semester === true) {
-            const s = idx + 2;
-            fs.appendFileSync(
-              './data/output.csv.local',
-              `('B${requireItem.departmentID}_${requireItem.groupID}_${year}${(`000${courseIdx}`).slice(-3)}',${Math.floor(s / 2)},${(s % 2) + 1}),\n`,
-            );
-          }
-        });
+        fs.appendFileSync(
+          './data/output.csv.local',
+          `('B${requireItem.departmentID}_${requireItem.groupID}_${year}${(`000${courseIdx}`).slice(-3)}',${year},${subject.name},'${rule.group}',${subject.maxCredit},${subject.semesterCount},'${subject.note}','${
+            subject.constraint.length > 3 ? subject.constraint : '無'}','${
+            subject.constraint.length == 3 ? '需為本系開課' : (subject.constraint.length == 1 ? '需為本院開課' : (subject.constraint.length == 0 ? '不限' : subject.constraint))}'),\n`,
+        );
+        // subject.semester.forEach((semester, idx) => {
+        //   if (semester === true) {
+        //     const s = idx + 2;
+        //     fs.appendFileSync(
+        //       './data/output.csv.local',
+        //       `('B${requireItem.departmentID}_${requireItem.groupID}_${year}${(`000${courseIdx}`).slice(-3)}',${Math.floor(s / 2)},${(s % 2) + 1}),\n`,
+        //     );
+        //   }
+        // });
         // results.push(resultItem);
       });
     });
