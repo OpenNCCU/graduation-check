@@ -1,52 +1,52 @@
 [
     {
-        "label": "^群([A-Za-z]).*",
-        "text": "^群[A-Za-z][:： ]*",
-        "autoprefix": false,
-        "concat": false
-    },
-    {
-        "label": ".*[(（)]群([A-Za-z])[)）]*.*",
-        "text": "",
-        "autoprefix": false,
-        "concat": false
-    },
-    {
         "label": "^(核心課程).*",
         "text": "",
-        "autoprefix": true,
-        "concat": false
+        "description": "社會學系"
     },
     {
         "label": "^(專業群修).*",
         "text": "",
-        "autoprefix": true,
-        "concat": false
+        "description": "電子物理學士學位學程"
     },
     {
         "label": "^(基礎群選).*",
         "text": "",
-        "autoprefix": false,
-        "concat": false,
-        "multicondition": true
+        "multicondition": true,
+        "description": "數位內容與科技學士學位學程"
+    },
+    {
+        "label": "^群[A-Za-z]*.(?:群[A-Za-z])*.*(合計).*",
+        "text": "",
+        "multicondition": true,
+        "description": "數位內容與科技學士學位學程"
     },
     {
         "label": "^\\((教材教法)與教學實習須為同一類科\\)$",
         "text": "",
-        "autoprefix": false,
-        "concat": true
+        "concat": true,
+        "description": "教育學系-師資組"
     },
     {
         "label": "^（(專題)一）全球化與民主治理專題\\(GDG\\)、（專題二）亞洲社會與永續發展專題\\(AS\\)、（專題三）全球科技與創新管理專題\\(GTIM\\)$",
         "text": "",
-        "autoprefix": false,
-        "concat": true
+        "concat": true,
+        "description": "創新國際學院學士班"
     },
     {
         "label": "^「(個人專業領域)」課程由學程外其他單位開設，每學期科目清單及學分認定申請方式請詳見學程網頁。$",
         "text": "",
-        "autoprefix": false,
-        "concat": true,
-        "ignore": true
+        "ignore": true,
+        "description": "運動產業與文化學士學位學程"
+    },
+    {
+        "label": "^群([A-Za-z]).*",
+        "text": "^群[A-Za-z][:： ]*",
+        "description": "一般群修"
+    },
+    {
+        "label": ".*[(（)]群([A-Za-z])[)）]*.*",
+        "text": "",
+        "description": "一般群修"
     }
 ]

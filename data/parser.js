@@ -2,7 +2,7 @@ import fs from 'fs';
 
 const parse = () => {
   fs.writeFileSync('./data/output.json.local', '');
-  fs.writeFileSync('./data/output.csv.local', '');
+  // fs.writeFileSync('./data/output.csv.local', '');
 
   const data = JSON.parse(fs.readFileSync('./data/result.json'));
   const groupConditionFilter = JSON.parse(fs.readFileSync('./data/groupConditionFilter.json'));
@@ -15,97 +15,65 @@ const parse = () => {
 
   Object.keys(data).forEach((year) => {
     data[year] = data[year].forEach((requireItem) => {
-      const resultItem = {};
 
-      // resultItem.year = requireItem.year;
-      // resultItem.departmentName = requireItem.departmentName;
+      const resultItem = { ...requireItem };
+
+      // const resultItem = {};
+      // resultItem.type =  requireItem.type;
+      // resultItem.year =  requireItem.year;
+      // resultItem.departmentID =  requireItem.departmentID;
+      // resultItem.groupID = requireItem.groupID;
+      // resultItem.departmentName =  requireItem.departmentName;
       // resultItem.groupName = requireItem.groupName;
+      // resultItem.requireCredit = requireItem.requireCredit;
+      // resultItem.minTotalCredit =  requireItem.minTotalCredit;
+      // resultItem.groupCondition =  requireItem.groupCondition;
+      // resultItem.spacialty = requireItem.spacialty;
+      // resultItem.rules = requireItem.rules;
 
-      // resultItem.aa = requireItem.groupCondition; // .findIndex((text) => text === '群修條件說明:') === 1;
-
-      /* */
-      resultItem.groupCondition = requireItem.groupCondition;
-
-      // requireItem.groupCondition.slice(2)
-      //   .filter((text) => text !== '無').forEach((text) => {
-      //     const match = groupConditionFilter.find((filter) => {
-      //       return text.match(filter.label)
-      //     });
-      //     if (match) {
-      //       return;
-      //     }
-      //     fs.appendFileSync('./data/output.csv.local', `${text}\n`);
-      //   });
-
-      resultItem.groupResult = [];
-      requireItem.groupCondition.slice(2)
+      resultItem.parsedGroupConditions = requireItem.groupCondition.slice(2)
         .filter((text) => text !== '無')
-        .forEach((item) => {
-          let label = item;
-          let text = item;
-          let concat = false;
-          let multicondition = false;
-          let ignore = false;
-          groupConditionFilter.forEach((filter) => {
-            if (item.match(filter.label)) {
-              if (filter.ignore) {
-                ignore = true;
-                return;
-              }
-              if (filter.concat) {
-                concat = true;
-                resultItem.groupResult[resultItem.groupResult.length - 1].text += ` ${text}`;
-                return;
-              }
-              if (filter.multicondition) {
-                multicondition = true;
-              }
-              if (filter.autoprefix) {
-                label = String.fromCharCode((resultItem.groupResult.length % 26) + 65);
-                text = item.replace(filter.text, '');
-                return;
-              }
-              label = item.replace(filter.label, '$1');
-              text = item.replace(filter.text, '');
-              return;
+        .reduce((acc, item) => {
+          let label = item, text = item, ignore = false, concat = false, multicondition = false;
+
+          const isConditionMatched = groupConditionFilter.some((filter) => {
+            if (!item.match(filter.label)) return false;
+            if (filter.ignore) return (ignore = true);
+            if (filter.concat) return (concat = true, acc[acc.length - 1].text += ` ${text}`);
+            if (filter.multicondition) multicondition = true;
+            label = item.replace(filter.label, '$1');
+            if (!label.match(/^[A-Za-z]$/)) {
+              label = String.fromCharCode((acc.length % 26) + 65);
             }
+            text = item.replace(filter.text, '');
+            return true;
           });
-          if (ignore) {
-            return;
+
+          if (!isConditionMatched) {
+            fs.appendFileSync('./data/output.csv.local', `${text}\n`);
+            return acc;
           }
+
           if (!concat) {
-            if (resultItem.groupResult.find((text) => text.label === label)) {
-              label = '*';
-              text = item;
-            }
-            if (multicondition) {
-              label = '*';
-            }
-            resultItem.groupResult = [...resultItem.groupResult, { label, text }];
+            if (ignore || multicondition || acc.find((entry) => entry.label === label)) label = '*';
+            acc.push({ label, text });
           }
-        });
-        // fs.appendFileSync('./data/output.csv.local', `[${label}]: ${text}\n`);
+          return acc;
+        }, []);
 
-      // if (resultItem.groups_2.filter((text) => !text.match(/^群[A-Za-z].*/)).length > 0) {
-      //   resultItem.year = requireItem.year;
-      //   resultItem.departmentName = requireItem.departmentName;
-      //   resultItem.groupName = requireItem.groupName;
-      //   resultItem.conditionLength = resultItem.groups_2.length;
-      //   resultItem.rulesLength = requireItem.rules.filter((rule) => rule.group.length > 0).length;
-      //   resultItem.aa = resultItem.conditionLength === resultItem.rulesLength;
-      // }
 
-      // if (results.findIndex((r) => JSON.stringify(r) === JSON.stringify(resultItem)) === -1) {
-      // results.push(resultItem);
-      // }
+      resultItem.parsedGroupConditions.forEach((parsedGroupCondition) => {
+        resultItem.rules
+          .filter((rule) => rule.group.includes(parsedGroupCondition.label))
+          .forEach((rule) => {
+            rule.description = parsedGroupCondition.text;
+          });
+      });
 
-      /* */
-
-      // fs.appendFileSync('./data/output.json.local', `${JSON.stringify(resultItem, null, 2)}\n`);
-      // resultItem.groupConditionLength = resultItem.groups.length;
-      // resultItem.groupRuleLength = requireItem.rules.filter((rule) => rule.group.length > 0).length;
-
-      /* */
+      // fs.appendFileSync('./data/output.csv.local', `[${requireItem.year}-${requireItem.departmentName}${requireItem.groupName.length > 0 ? ':' + requireItem.groupName : ''}]\n`);
+      // resultItem.parsedGroupConditions.forEach(({ label, text }) => {
+      //   fs.appendFileSync('./data/output.csv.local', `[${label}]: ${text} [${requireItem.year}-${requireItem.departmentName}${requireItem.groupName.length > 0 ? ':' + requireItem.groupName : ''}]\n`);
+      // });
 
       results.push(resultItem);
     });
