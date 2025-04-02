@@ -23,9 +23,15 @@ const parse = () => {
       // resultItem.groups_1 = requireItem.groupCondition.slice(0, 1);
       resultItem.groups_2 = requireItem.groupCondition.slice(2)
         .filter((text) => text !== '無');
-      // resultItem.groups_2.forEach((text) => {
-      //   fs.appendFileSync('./data/output.csv.local', `${text}\n`);
-      // });
+      resultItem.groups_2.forEach((text) => {
+        if (text.match(/[(（)]群([A-Za-z])[)）].*/)) {
+          return;
+        }
+        if (text.match(/^群[A-Za-z].*/)) {
+          return;
+        }
+        fs.appendFileSync('./data/output.csv.local', `${requireItem.year + requireItem.departmentName} ${text}\n${requireItem.groupCondition}\n\n`);
+      });
       // resultItem.groups_3 = resultItem.groups_2
       //   .reduce((acc, text, i) => ({ ...acc, [[...'ABCDEFG'][i]]: text }), {});
       // .map((text, i) => {
@@ -41,7 +47,7 @@ const parse = () => {
           const label = item.replace(/^群([A-Za-z]).*/, '$1');
           const text = item.replace(/群[A-Za-z][:： ]/, '');
           resultItem.groups_3 = { ...resultItem.groups_3, [label]: text };
-          fs.appendFileSync('./data/output.csv.local', `[${label}]: ${text}\n`);
+          // fs.appendFileSync('./data/output.csv.local', `[${label}]: ${text}\n`);
         });
 
       // if (resultItem.groups_2.filter((text) => !text.match(/^群[A-Za-z].*/)).length > 0) {
