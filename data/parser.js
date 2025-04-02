@@ -6,6 +6,10 @@ const parse = () => {
 
   const data = JSON.parse(fs.readFileSync('./data/result.json'));
   const groupConditionFilter = JSON.parse(fs.readFileSync('./data/groupConditionFilter.json'));
+  groupConditionFilter.forEach((item) => {
+    item.label = new RegExp(item.label);
+    item.text = new RegExp(item.text);
+  });
 
   const results = [];
 
@@ -21,35 +25,66 @@ const parse = () => {
 
       /* */
       resultItem.groupCondition = requireItem.groupCondition;
-      // resultItem.groups_1 = requireItem.groupCondition.slice(0, 1);
-      resultItem.groups_2 = requireItem.groupCondition.slice(2)
-        .filter((text) => text !== '無');
-      resultItem.groups_2.forEach((text) => {
-        if (text.match(/[(（)]群([A-Za-z])[)）].*/)) { // Match groupConditionFilter label filter
-          return;
-        }
-        if (text.match(/^群[A-Za-z].*/)) { // Match groupConditionFilter label filter
-          return;
-        }
-        fs.appendFileSync('./data/output.csv.local', `${requireItem.year + requireItem.departmentName} ${text}\n${requireItem.groupCondition}\n\n`);
-      });
-      // resultItem.groups_3 = resultItem.groups_2
-      //   .reduce((acc, text, i) => ({ ...acc, [[...'ABCDEFG'][i]]: text }), {});
-      // .map((text, i) => {
-      //   if (text.match(/^群[A-Za-z].*/)
-      //     || i >= requireItem.rules.filter((rule) => rule.group.length > 0).length) {
-      //     return { [[...'ABCDEFG'][i]]: text };
-      //   }
-      //   return { [[...'ABCDEFG'][i]]: text };
-      // });
-      resultItem.groups_3 = {};
-      resultItem.groups_2
+
+      // requireItem.groupCondition.slice(2)
+      //   .filter((text) => text !== '無').forEach((text) => {
+      //     const match = groupConditionFilter.find((filter) => {
+      //       return text.match(filter.label)
+      //     });
+      //     if (match) {
+      //       return;
+      //     }
+      //     fs.appendFileSync('./data/output.csv.local', `${text}\n`);
+      //   });
+
+      resultItem.groupResult = [];
+      requireItem.groupCondition.slice(2)
+        .filter((text) => text !== '無')
         .forEach((item) => {
-          const label = item.replace(/^群([A-Za-z]).*/, '$1'); // Match groupConditionFilter label filter
-          const text = item.replace(/群[A-Za-z][:： ]/, ''); // Match groupConditionFilter text filter
-          resultItem.groups_3 = { ...resultItem.groups_3, [label]: text };
-          // fs.appendFileSync('./data/output.csv.local', `[${label}]: ${text}\n`);
+          let label = item;
+          let text = item;
+          let concat = false;
+          let multicondition = false;
+          let ignore = false;
+          groupConditionFilter.forEach((filter) => {
+            if (item.match(filter.label)) {
+              if (filter.ignore) {
+                ignore = true;
+                return;
+              }
+              if (filter.concat) {
+                concat = true;
+                resultItem.groupResult[resultItem.groupResult.length - 1].text += ` ${text}`;
+                return;
+              }
+              if (filter.multicondition) {
+                multicondition = true;
+              }
+              if (filter.autoprefix) {
+                label = String.fromCharCode((resultItem.groupResult.length % 26) + 65);
+                text = item.replace(filter.text, '');
+                return;
+              }
+              label = item.replace(filter.label, '$1');
+              text = item.replace(filter.text, '');
+              return;
+            }
+          });
+          if (ignore) {
+            return;
+          }
+          if (!concat) {
+            if (resultItem.groupResult.find((text) => text.label === label)) {
+              label = '*';
+              text = item;
+            }
+            if (multicondition) {
+              label = '*';
+            }
+            resultItem.groupResult = [...resultItem.groupResult, { label, text }];
+          }
         });
+        // fs.appendFileSync('./data/output.csv.local', `[${label}]: ${text}\n`);
 
       // if (resultItem.groups_2.filter((text) => !text.match(/^群[A-Za-z].*/)).length > 0) {
       //   resultItem.year = requireItem.year;

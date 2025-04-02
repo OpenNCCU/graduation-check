@@ -1,10 +1,52 @@
 [
     {
         "label": "^群([A-Za-z]).*",
-        "text": "群[A-Za-z][:： ]"
+        "text": "^群[A-Za-z][:： ]*",
+        "autoprefix": false,
+        "concat": false
     },
     {
-        "label": ".*[(（)]群([A-Za-z])[)）].*",
-        "text": "[(（)]群([A-Za-z])[)）]"
+        "label": ".*[(（)]群([A-Za-z])[)）]*.*",
+        "text": "",
+        "autoprefix": false,
+        "concat": false
+    },
+    {
+        "label": "^(核心課程).*",
+        "text": "",
+        "autoprefix": true,
+        "concat": false
+    },
+    {
+        "label": "^(專業群修).*",
+        "text": "",
+        "autoprefix": true,
+        "concat": false
+    },
+    {
+        "label": "^(基礎群選).*",
+        "text": "",
+        "autoprefix": false,
+        "concat": false,
+        "multicondition": true
+    },
+    {
+        "label": "^\\((教材教法)與教學實習須為同一類科\\)$",
+        "text": "",
+        "autoprefix": false,
+        "concat": true
+    },
+    {
+        "label": "^（(專題)一）全球化與民主治理專題\\(GDG\\)、（專題二）亞洲社會與永續發展專題\\(AS\\)、（專題三）全球科技與創新管理專題\\(GTIM\\)$",
+        "text": "",
+        "autoprefix": false,
+        "concat": true
+    },
+    {
+        "label": "^「(個人專業領域)」課程由學程外其他單位開設，每學期科目清單及學分認定申請方式請詳見學程網頁。$",
+        "text": "",
+        "autoprefix": false,
+        "concat": true,
+        "ignore": true
     }
 ]
