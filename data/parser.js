@@ -5,6 +5,7 @@ const parse = () => {
   fs.writeFileSync('./data/output.csv.local', '');
 
   const data = JSON.parse(fs.readFileSync('./data/result.json'));
+  const groupConditionFilter = JSON.parse(fs.readFileSync('./data/groupConditionFilter.json'));
 
   const results = [];
 
@@ -24,10 +25,10 @@ const parse = () => {
       resultItem.groups_2 = requireItem.groupCondition.slice(2)
         .filter((text) => text !== '無');
       resultItem.groups_2.forEach((text) => {
-        if (text.match(/[(（)]群([A-Za-z])[)）].*/)) {
+        if (text.match(/[(（)]群([A-Za-z])[)）].*/)) { // Match groupConditionFilter label filter
           return;
         }
-        if (text.match(/^群[A-Za-z].*/)) {
+        if (text.match(/^群[A-Za-z].*/)) { // Match groupConditionFilter label filter
           return;
         }
         fs.appendFileSync('./data/output.csv.local', `${requireItem.year + requireItem.departmentName} ${text}\n${requireItem.groupCondition}\n\n`);
@@ -44,8 +45,8 @@ const parse = () => {
       resultItem.groups_3 = {};
       resultItem.groups_2
         .forEach((item) => {
-          const label = item.replace(/^群([A-Za-z]).*/, '$1');
-          const text = item.replace(/群[A-Za-z][:： ]/, '');
+          const label = item.replace(/^群([A-Za-z]).*/, '$1'); // Match groupConditionFilter label filter
+          const text = item.replace(/群[A-Za-z][:： ]/, ''); // Match groupConditionFilter text filter
           resultItem.groups_3 = { ...resultItem.groups_3, [label]: text };
           // fs.appendFileSync('./data/output.csv.local', `[${label}]: ${text}\n`);
         });
