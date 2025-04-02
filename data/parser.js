@@ -1,53 +1,74 @@
 import fs from 'fs';
 
 const parse = () => {
-  // const rawfileList = fs.readdirSync('./data/res/');
-  // const rawData = {113: []};
-  // rawfileList.forEach((filename) => {
-  //   const data = JSON.parse(fs.readFileSync(`./data/res/${filename}`));
-  //   rawData[113].push(data);
-  // });
+  fs.writeFileSync('./data/output.json.local', '');
+  fs.writeFileSync('./data/output.csv.local', '');
 
-  // fs.writeFileSync('./data/output.json.local', '');
-  // fs.writeFileSync('./data/output.csv.local', 'INSERT INTO public.test_require_grade\nVALUES\n');
-  fs.writeFileSync('./data/output.csv.local', 'INSERT INTO public.test_require_grade (require_uid, major, year, name, group, credit, semester, note, course_id_constraint, unit_constraint)\nVALUES\n');
-  const data = rawData;
-  // const data = JSON.parse(fs.readFileSync('./data/result.json'));
+  const data = JSON.parse(fs.readFileSync('./data/result.json'));
 
   const results = [];
 
-  // Object.keys(data).forEach((year) => {
-  //   data[year] =\
-  const year = 113;
-  data[year].forEach((requireItem) => {
-    let courseIdx = 0;
-    requireItem.rules.forEach((rule) => {
-      const { subjects } = rule;
-      subjects.forEach((subject) => {
-        courseIdx += 1;
-        fs.appendFileSync(
-          './data/output.csv.local',
-          `('B${requireItem.departmentID}_${requireItem.groupID}_${year}${(`000${courseIdx}`).slice(-3)}',${year},${subject.name},'${rule.group}',${subject.maxCredit},${subject.semesterCount},'${subject.note}','${
-            subject.constraint.length > 3 ? subject.constraint : '無'}','${
-            subject.constraint.length == 3 ? '需為本系開課' : (subject.constraint.length == 1 ? '需為本院開課' : (subject.constraint.length == 0 ? '不限' : subject.constraint))}'),\n`,
-        );
-        // subject.semester.forEach((semester, idx) => {
-        //   if (semester === true) {
-        //     const s = idx + 2;
-        //     fs.appendFileSync(
-        //       './data/output.csv.local',
-        //       `('B${requireItem.departmentID}_${requireItem.groupID}_${year}${(`000${courseIdx}`).slice(-3)}',${Math.floor(s / 2)},${(s % 2) + 1}),\n`,
-        //     );
-        //   }
-        // });
-        // results.push(resultItem);
-      });
-    });
+  Object.keys(data).forEach((year) => {
+    data[year] = data[year].forEach((requireItem) => {
+      const resultItem = {};
 
-    // results.push(resultItem);
+      // resultItem.year = requireItem.year;
+      // resultItem.departmentName = requireItem.departmentName;
+      // resultItem.groupName = requireItem.groupName;
+
+      // resultItem.aa = requireItem.groupCondition; // .findIndex((text) => text === '群修條件說明:') === 1;
+
+      /* */
+      resultItem.groupCondition = requireItem.groupCondition;
+      // resultItem.groups_1 = requireItem.groupCondition.slice(0, 1);
+      resultItem.groups_2 = requireItem.groupCondition.slice(2)
+        .filter((text) => text !== '無');
+      // resultItem.groups_2.forEach((text) => {
+      //   fs.appendFileSync('./data/output.csv.local', `${text}\n`);
+      // });
+      // resultItem.groups_3 = resultItem.groups_2
+      //   .reduce((acc, text, i) => ({ ...acc, [[...'ABCDEFG'][i]]: text }), {});
+      // .map((text, i) => {
+      //   if (text.match(/^群[A-Za-z].*/)
+      //     || i >= requireItem.rules.filter((rule) => rule.group.length > 0).length) {
+      //     return { [[...'ABCDEFG'][i]]: text };
+      //   }
+      //   return { [[...'ABCDEFG'][i]]: text };
+      // });
+      resultItem.groups_3 = {};
+      resultItem.groups_2
+        .forEach((item) => {
+          const label = item.replace(/^群([A-Za-z]).*/, '$1');
+          const text = item.replace(/群[A-Za-z][:： ]/, '');
+          resultItem.groups_3 = { ...resultItem.groups_3, [label]: text };
+          fs.appendFileSync('./data/output.csv.local', `[${label}]: ${text}\n`);
+        });
+
+      // if (resultItem.groups_2.filter((text) => !text.match(/^群[A-Za-z].*/)).length > 0) {
+      //   resultItem.year = requireItem.year;
+      //   resultItem.departmentName = requireItem.departmentName;
+      //   resultItem.groupName = requireItem.groupName;
+      //   resultItem.conditionLength = resultItem.groups_2.length;
+      //   resultItem.rulesLength = requireItem.rules.filter((rule) => rule.group.length > 0).length;
+      //   resultItem.aa = resultItem.conditionLength === resultItem.rulesLength;
+      // }
+
+      // if (results.findIndex((r) => JSON.stringify(r) === JSON.stringify(resultItem)) === -1) {
+      // results.push(resultItem);
+      // }
+
+      /* */
+
+      // fs.appendFileSync('./data/output.json.local', `${JSON.stringify(resultItem, null, 2)}\n`);
+      // resultItem.groupConditionLength = resultItem.groups.length;
+      // resultItem.groupRuleLength = requireItem.rules.filter((rule) => rule.group.length > 0).length;
+
+      /* */
+
+      results.push(resultItem);
+    });
   });
-  // });
-  // fs.appendFileSync('./data/output.json.local', `${JSON.stringify(results, null, 2)}\n`);
+  fs.appendFileSync('./data/output.json.local', `${JSON.stringify(results, null, 2)}\n`);
 
   return data;
 };

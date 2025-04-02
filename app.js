@@ -24,14 +24,15 @@ app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
 
-app.get('*', (req, res) => {
+app.get('/', (req, res) => {
   // departmentMapParser();
   // const data = parser();
   // console.log(req.url)
   parser();
   // req.body = dummydata;
   req.body = {};
-  const data = handleData(req.body);
+  // const data = handleData(req.body);
+  const data = parser();
   const result = { data, success: false, error: 'NULL PATH.' };
   res.send(result);
 });
