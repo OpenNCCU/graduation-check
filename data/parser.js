@@ -1,8 +1,9 @@
 import fs from 'fs';
+import parseChineseNumbers from '../src/utils/chineseNumber.util.js';
 
 const parse = () => {
   fs.writeFileSync('./data/output.json.local', '');
-  // fs.writeFileSync('./data/output.csv.local', '');
+  fs.writeFileSync('./data/output.csv.local', '');
 
   const data = JSON.parse(fs.readFileSync('./data/result.json'));
   const groupConditionFilter = JSON.parse(fs.readFileSync('./data/groupConditionFilter.json'));
@@ -16,9 +17,9 @@ const parse = () => {
   Object.keys(data).forEach((year) => {
     data[year] = data[year].forEach((requireItem) => {
 
-      const resultItem = { ...requireItem };
+      // const resultItem = { ...requireItem };
 
-      // const resultItem = {};
+      const resultItem = {};
       // resultItem.type =  requireItem.type;
       // resultItem.year =  requireItem.year;
       // resultItem.departmentID =  requireItem.departmentID;
@@ -27,7 +28,7 @@ const parse = () => {
       // resultItem.groupName = requireItem.groupName;
       // resultItem.requireCredit = requireItem.requireCredit;
       // resultItem.minTotalCredit =  requireItem.minTotalCredit;
-      // resultItem.groupCondition =  requireItem.groupCondition;
+      resultItem.groupCondition = requireItem.groupCondition;
       // resultItem.spacialty = requireItem.spacialty;
       // resultItem.rules = requireItem.rules;
 
@@ -61,19 +62,23 @@ const parse = () => {
           return acc;
         }, []);
 
-
       resultItem.parsedGroupConditions.forEach((parsedGroupCondition) => {
-        resultItem.rules
-          .filter((rule) => rule.group.includes(parsedGroupCondition.label))
-          .forEach((rule) => {
-            rule.description = parsedGroupCondition.text;
-          });
+        parsedGroupCondition.aaa = parseChineseNumbers(parsedGroupCondition.text)
+        // parsedGroupCondition.bbb = parsedGroupCondition.aaa.split(/(選|門|[0-9]+)/).filter(e => e.length > 0);
       });
 
-      // fs.appendFileSync('./data/output.csv.local', `[${requireItem.year}-${requireItem.departmentName}${requireItem.groupName.length > 0 ? ':' + requireItem.groupName : ''}]\n`);
-      // resultItem.parsedGroupConditions.forEach(({ label, text }) => {
-      //   fs.appendFileSync('./data/output.csv.local', `[${label}]: ${text} [${requireItem.year}-${requireItem.departmentName}${requireItem.groupName.length > 0 ? ':' + requireItem.groupName : ''}]\n`);
+      // resultItem.parsedGroupConditions.forEach((parsedGroupCondition) => {
+      //   resultItem.rules
+      //     .filter((rule) => rule.group.includes(parsedGroupCondition.label))
+      //     .forEach((rule) => {
+      //       rule.description = parsedGroupCondition.text;
+      //     });
       // });
+
+      fs.appendFileSync('./data/output.csv.local', `[${requireItem.year}-${requireItem.departmentName}${requireItem.groupName.length > 0 ? ':' + requireItem.groupName : ''}]\n`);
+      resultItem.parsedGroupConditions.forEach(({ label, text }) => {
+        fs.appendFileSync('./data/output.csv.local', `[${label}]: ${text} [${requireItem.year}-${requireItem.departmentName}${requireItem.groupName.length > 0 ? ':' + requireItem.groupName : ''}]\n`);
+      });
 
       results.push(resultItem);
     });
