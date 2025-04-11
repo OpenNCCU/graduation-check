@@ -64,6 +64,8 @@ const parse = () => {
 
       resultItem.parsedGroupConditions.forEach((parsedGroupCondition) => {
         parsedGroupCondition.aaa = parseChineseNumbers(parsedGroupCondition.text)
+        // fs.appendFileSync('./data/output.csv.local', `[${parsedGroupCondition.label}]: ${parsedGroupCondition.aaa} [${requireItem.year}-${requireItem.departmentName}${requireItem.groupName.length > 0 ? ':' + requireItem.groupName : ''}]\n`);
+        fs.appendFileSync('./data/output.csv.local', `[${parsedGroupCondition.label}]: ${parsedGroupCondition.aaa}\n`);
         // parsedGroupCondition.bbb = parsedGroupCondition.aaa.split(/(選|門|[0-9]+)/).filter(e => e.length > 0);
       });
 
@@ -75,10 +77,10 @@ const parse = () => {
       //     });
       // });
 
-      fs.appendFileSync('./data/output.csv.local', `[${requireItem.year}-${requireItem.departmentName}${requireItem.groupName.length > 0 ? ':' + requireItem.groupName : ''}]\n`);
-      resultItem.parsedGroupConditions.forEach(({ label, text }) => {
-        fs.appendFileSync('./data/output.csv.local', `[${label}]: ${text} [${requireItem.year}-${requireItem.departmentName}${requireItem.groupName.length > 0 ? ':' + requireItem.groupName : ''}]\n`);
-      });
+      // fs.appendFileSync('./data/output.csv.local', `[${requireItem.year}-${requireItem.departmentName}${requireItem.groupName.length > 0 ? ':' + requireItem.groupName : ''}]\n`);
+      // resultItem.parsedGroupConditions.forEach(({ label, text }) => {
+      //   fs.appendFileSync('./data/output.csv.local', `[${label}]: ${text} [${requireItem.year}-${requireItem.departmentName}${requireItem.groupName.length > 0 ? ':' + requireItem.groupName : ''}]\n`);
+      // });
 
       results.push(resultItem);
     });
