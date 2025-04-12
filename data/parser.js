@@ -1,4 +1,5 @@
 import fs from 'fs';
+import nodejieba from 'nodejieba';
 import parseChineseNumbers from '../src/utils/chineseNumber.util.js';
 
 const parse = () => {
@@ -97,12 +98,12 @@ const parse = () => {
 
   [...new Set(fs.readFileSync('./data/output.csv.local').toString().split('\n'))].forEach((item) => {
     fs.appendFileSync('./data/output111.csv.local', `${item}\n`);
-    const regaaa = `(?:(?:[0-9]+(?:學分)*)(?:[門科目組軌課程]|學分)*)*(?:[選擇至少必修]+)(?:(?:[0-9]+(?:學分)*)(?:[門科目組軌課程]|學分)*)`;
-    const pp = new RegExp(`(${regaaa})`, 'g');
+    // const regaaa = `(?:[至少群修]+)*(?:(?:[0-9]+(?:學分)*)(?:[門科目組軌課程]|學分)*)*(?:[選擇至最少必修]+)(?:(?:[0-9]+(?:學分)*)(?:[門科目組軌課程]|學分)*)|[0-9]+(?:學分)`;
+    // const pp = new RegExp(`(${regaaa})`, 'g');
     // const qq = new RegExp('([選擇中至少必修]+(?=\\[))', 'g');
-    const xxx = item.replace(pp, '[$1]');
+    // const xxx = item.replace(pp, '[$1]');
     // const zz = new RegExp('([0-9]+(?:[門科]*|學分*).*(?:[選擇修習至少]|選擇|修習|至少)[0-9]+(?:[門科]*|學分*))', 'g');
-    fs.appendFileSync('./data/output111.csv.local', `${xxx}\n\n`);
+    fs.appendFileSync('./data/output111.csv.local', `${nodejieba.cut(item)}\n\n`);
   });
 
   fs.appendFileSync('./data/output.json.local', `${JSON.stringify(results, null, 2)}\n`);
