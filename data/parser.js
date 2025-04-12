@@ -4,6 +4,7 @@ import parseChineseNumbers from '../src/utils/chineseNumber.util.js';
 const parse = () => {
   fs.writeFileSync('./data/output.json.local', '');
   fs.writeFileSync('./data/output.csv.local', '');
+  fs.writeFileSync('./data/output111.csv.local', '');
 
   const data = JSON.parse(fs.readFileSync('./data/result.json'));
   const groupConditionFilter = JSON.parse(fs.readFileSync('./data/groupConditionFilter.json'));
@@ -65,8 +66,16 @@ const parse = () => {
       resultItem.parsedGroupConditions.forEach((parsedGroupCondition) => {
         parsedGroupCondition.aaa = parseChineseNumbers(parsedGroupCondition.text)
         // fs.appendFileSync('./data/output.csv.local', `[${parsedGroupCondition.label}]: ${parsedGroupCondition.aaa} [${requireItem.year}-${requireItem.departmentName}${requireItem.groupName.length > 0 ? ':' + requireItem.groupName : ''}]\n`);
-        fs.appendFileSync('./data/output.csv.local', `[${parsedGroupCondition.label}]: ${parsedGroupCondition.aaa}\n`);
-        // parsedGroupCondition.bbb = parsedGroupCondition.aaa.split(/(選|門|[0-9]+)/).filter(e => e.length > 0);
+        // fs.appendFileSync('./data/output.csv.local', `[${parsedGroupCondition.label}]: ${parsedGroupCondition.text}\n`);
+        // fs.appendFileSync('./data/output.csv.local', `[${parsedGroupCondition.label}]: ${parsedGroupCondition.aaa}\n`);
+        fs.appendFileSync('./data/output.csv.local', `${parsedGroupCondition.aaa}\n`);
+        // const pp = new RegExp('([0-9]+(?:學分)*)([門科目組軌課程])*', 'g');
+        // const qq = new RegExp('([選擇中至少必修]+(?=\\[))', 'g');
+        // parsedGroupCondition.xxx = parsedGroupCondition.aaa.replace(pp, '[$1]').replace(qq, '[->]');
+        // fs.appendFileSync('./data/output.csv.local', `${parsedGroupCondition.xxx}\n`);
+        // const zz = new RegExp('([0-9]+(?:[門科]*|學分*).*(?:[選擇修習至少]|選擇|修習|至少)[0-9]+(?:[門科]*|學分*))', 'g');
+        // parsedGroupCondition.bbb = parsedGroupCondition.aaa.split(zz).filter((item) => item.match(zz));
+        // fs.appendFileSync('./data/output.csv.local', `[${parsedGroupCondition.label}]: ${parsedGroupCondition.bbb}\n`);
       });
 
       // resultItem.parsedGroupConditions.forEach((parsedGroupCondition) => {
@@ -85,6 +94,17 @@ const parse = () => {
       results.push(resultItem);
     });
   });
+
+  [...new Set(fs.readFileSync('./data/output.csv.local').toString().split('\n'))].forEach((item) => {
+    fs.appendFileSync('./data/output111.csv.local', `${item}\n`);
+    const regaaa = `(?:(?:[0-9]+(?:學分)*)(?:[門科目組軌課程]|學分)*)*(?:[選擇至少必修]+)(?:(?:[0-9]+(?:學分)*)(?:[門科目組軌課程]|學分)*)`;
+    const pp = new RegExp(`(${regaaa})`, 'g');
+    // const qq = new RegExp('([選擇中至少必修]+(?=\\[))', 'g');
+    const xxx = item.replace(pp, '[$1]');
+    // const zz = new RegExp('([0-9]+(?:[門科]*|學分*).*(?:[選擇修習至少]|選擇|修習|至少)[0-9]+(?:[門科]*|學分*))', 'g');
+    fs.appendFileSync('./data/output111.csv.local', `${xxx}\n\n`);
+  });
+
   fs.appendFileSync('./data/output.json.local', `${JSON.stringify(results, null, 2)}\n`);
 
   return data;
