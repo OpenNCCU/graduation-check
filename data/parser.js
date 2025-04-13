@@ -1,6 +1,10 @@
 import fs from 'fs';
-import nodejieba from 'nodejieba';
+import { Jieba } from '@node-rs/jieba'
+import { Buffer } from 'buffer';
 import parseChineseNumbers from '../src/utils/chineseNumber.util.js';
+
+const dictPath = './data/dict.txt'
+const jieba = Jieba.withDict(Buffer.from(fs.readFileSync(dictPath, 'utf-8'), 'utf-8'))
 
 const parse = () => {
   fs.writeFileSync('./data/output.json.local', '');
@@ -52,6 +56,8 @@ const parse = () => {
             return true;
           });
 
+          text = text.replace(/ +/g, '');
+
           if (!isConditionMatched) {
             fs.appendFileSync('./data/output.csv.local', `${text}\n`);
             return acc;
@@ -98,12 +104,84 @@ const parse = () => {
 
   [...new Set(fs.readFileSync('./data/output.csv.local').toString().split('\n'))].forEach((item) => {
     fs.appendFileSync('./data/output111.csv.local', `${item}\n`);
-    // const regaaa = `(?:[至少群修]+)*(?:(?:[0-9]+(?:學分)*)(?:[門科目組軌課程]|學分)*)*(?:[選擇至最少必修]+)(?:(?:[0-9]+(?:學分)*)(?:[門科目組軌課程]|學分)*)|[0-9]+(?:學分)`;
-    // const pp = new RegExp(`(${regaaa})`, 'g');
-    // const qq = new RegExp('([選擇中至少必修]+(?=\\[))', 'g');
-    // const xxx = item.replace(pp, '[$1]');
-    // const zz = new RegExp('([0-9]+(?:[門科]*|學分*).*(?:[選擇修習至少]|選擇|修習|至少)[0-9]+(?:[門科]*|學分*))', 'g');
-    fs.appendFileSync('./data/output111.csv.local', `${nodejieba.cut(item)}\n\n`);
+
+    const segmentedWords = jieba.cut(item);
+    // fs.appendFileSync('./data/output111.csv.local', `${ddd.join(' ')}\n`);
+
+    const numericRegex = /^[0-9]+$/;
+    const mandatoryCoursesRegex = /^[挑選擇必修讀習]+$/;
+    const courseCountRegex = /^[門科目學群組軌]+$/;
+    const creditCountRegex = /^學分+$/;
+
+    const filteredSegments = segmentedWords.filter((item, idx, arr) => {
+      const prev = arr[idx - 1];
+      const next = arr[idx + 1];
+      return (
+        (next && numericRegex.test(next) && mandatoryCoursesRegex.test(item)) ||
+        numericRegex.test(item) ||
+        (prev && numericRegex.test(prev) && (courseCountRegex.test(item) || creditCountRegex.test(item)))
+      );
+    }).reduce((acc, item) => {
+      const last = acc[acc.length - 1];
+      if (numericRegex.test(item)) {
+        if (last && last.length && mandatoryCoursesRegex.test(last[last.length - 1])) {
+          last.push(item);
+        } else {
+          acc.push([item]);
+        }
+      } else if (mandatoryCoursesRegex.test(item)) {
+        if (
+          last &&
+          last.length &&
+          !last.some(e => mandatoryCoursesRegex.test(e)) &&
+          (numericRegex.test(last[last.length - 1]) || (courseCountRegex.test(item) || creditCountRegex.test(item)))
+        ) {
+          last.push(item);
+        } else {
+          acc.push([item]);
+        }
+      } else if ((courseCountRegex.test(item) || creditCountRegex.test(item)) && last) {
+        last.push(item);
+      }
+      return acc;
+    }, []);
+
+    const creditGroupCount = filteredSegments.filter(item => item.some(e => creditCountRegex.test(e))).length;
+    const mandatoryGroupCount = filteredSegments.filter(item => item.some(e => mandatoryCoursesRegex.test(e))).length;
+    const filteredCourseSegments = filteredSegments.reduce((acc, item) => {
+      if (item.some(e => mandatoryCoursesRegex.test(e))) {
+        acc.push([item.slice(item.findIndex(e => mandatoryCoursesRegex.test(e)))]);
+      } else if (item.some(e => creditCountRegex.test(e)) && creditGroupCount <= 1) {
+        const last = acc[acc.length - 1];
+        last && last[last.length - 1].some(e => mandatoryCoursesRegex.test(e))
+          ? last.push(item)
+          : acc.push([item]);
+      } else if (item.some(e => courseCountRegex.test(e)) && mandatoryGroupCount === 0) {
+        acc.push([item]);
+      }
+      return acc;
+    }, []);
+
+    // fs.appendFileSync('./data/output111.csv.local', `${filteredCourseSegments.map(e1 => e1.map(e2 => e2.join(' ')).join('; ')).join('\n')}\n`);
+
+    const zzz = filteredCourseSegments.map(segmentGroup => {
+      const result = { minCredit: -1, courseCount: -1 };
+      segmentGroup.forEach(tokens => {
+        const idx = tokens.findIndex(item => numericRegex.test(item));
+        if (idx === -1) return;
+        const number = parseInt(tokens[idx]);
+        if (idx === tokens.length - 1 || (idx + 1 < tokens.length && courseCountRegex.test(tokens[idx + 1]))) {
+          result.courseCount = number;
+        }
+        if (idx + 1 < tokens.length && creditCountRegex.test(tokens[idx + 1])) {
+          result.minCredit = number;
+        }
+      });
+      return result;
+    });
+
+    fs.appendFileSync('./data/output111.csv.local', `${JSON.stringify(zzz)}\n`);
+    fs.appendFileSync('./data/output111.csv.local', `\n`);
   });
 
   fs.appendFileSync('./data/output.json.local', `${JSON.stringify(results, null, 2)}\n`);

@@ -3,7 +3,7 @@ export const parseChineseNumbers = (input) => {
   const chTenth = "十百千拾佰仟什";
 
   // 正則表達式：擷取一段段純中文數字(含大寫小寫、全形數字、十百千等)
-  const regexChineseNumber = new RegExp(`(?<![第同大]+)((?<=[(（)])[${chDigit}${chTenth}]+(?![)）])|(?<![（（])[${chDigit}${chTenth}]+)(?!(?:[年類：:]|學年|學期|學群))`, "g");
+  const regexChineseNumber = new RegExp(`(?<![第同大此]+|(?:或為一學.)|(?:[(（])專題+)((?<=[(（)])[${chDigit}${chTenth}]+(?![)）])|(?<![(（])[${chDigit}${chTenth}]+)(?!(?:[年類：:]|學年|學期))`, "g");
 
   return input.split(regexChineseNumber).map((segment, index) => {
     // 偶數索引 -> 非中文數字部分 (保留原樣)

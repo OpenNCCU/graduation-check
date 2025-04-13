@@ -9,7 +9,7 @@ import cors from 'cors';
 // methods
 import parser from './data/parser.js';
 // import departmentMapParser from './data/departmentMapParser.js';
-import handleData from './src/dataHandler.js';
+// import handleData from './src/dataHandler.js';
 
 const app = express();
 const port = 3000;
@@ -20,7 +20,6 @@ app.use(cors());
 // app.use("/api/test", require("./src/api/test"));
 
 app.listen(port, () => {
-  // eslint-disable-next-line no-console
   console.log(`App listening at http://localhost:${port}`);
 });
 

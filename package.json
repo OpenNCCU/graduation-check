@@ -8,6 +8,7 @@
     "dev": "nodemon app.js"
   },
   "dependencies": {
+    "@node-rs/jieba": "^2.0.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "ts-migrate": "^0.1.35"
