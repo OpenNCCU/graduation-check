@@ -220,7 +220,7 @@ const parse = () => {
 
     // 對整理後的片段群組進一步解析，計算每組的最小學分與課程數量
     const zzz = filteredCourseSegments.map(segmentGroup => {
-      const result = { minCredit: -1, courseCount: -1 };
+      const result = { requiredCredit: -1, requiredCourseCount: -1 };
       segmentGroup.forEach(tokens => {
         // 找出tokens中第一個符合數字的項目索引
         const idx = tokens.findIndex(item => numericRegex.test(item));
@@ -229,11 +229,11 @@ const parse = () => {
         const number = parseInt(tokens[idx]);
         // 若該數字位於tokens結尾或下一項為課程數關鍵字，則認定為課程數
         if (idx === tokens.length - 1 || (idx + 1 < tokens.length && courseCountRegex.test(tokens[idx + 1]))) {
-          result.courseCount = number;
+          result.requiredCourseCount = number;
         }
         // 若下一項為學分關鍵字，則認定為最小學分數
         if (idx + 1 < tokens.length && creditCountRegex.test(tokens[idx + 1])) {
-          result.minCredit = number;
+          result.requiredCredit = number;
         }
       });
       return result;
