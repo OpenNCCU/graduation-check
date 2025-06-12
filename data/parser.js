@@ -216,11 +216,20 @@ const parse = () => {
       return acc;
     }, []);
 
-    // fs.appendFileSync('./data/output111.csv.local', `${filteredCourseSegments.map(e1 => e1.map(e2 => e2.join(' ')).join('; ')).join('\n')}\n`);
+    fs.appendFileSync('./data/output111.csv.local', `${segmentedWords}\n`);
+    fs.appendFileSync('./data/output111.csv.local', `${filteredCourseSegments.map(e1 => e1.map(e2 => e2.join(' ')).join('; ')).join('\n')}\n`);
 
     // 對整理後的片段群組進一步解析，計算每組的最小學分與課程數量
     const zzz = filteredCourseSegments.map(segmentGroup => {
-      const result = { requiredCredit: -1, requiredCourseCount: -1 };
+      const result = {
+        requiredCredit: -1,
+        requiredCourseCount: -1,
+        requiredruleCount: -1,
+        ignorable: false,
+        rules: [{
+          ['$ref']: {}
+        }]
+      };
       segmentGroup.forEach(tokens => {
         // 找出tokens中第一個符合數字的項目索引
         const idx = tokens.findIndex(item => numericRegex.test(item));
